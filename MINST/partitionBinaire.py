@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import csv
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.utils.validation import check_array
 
 taille = 1000
 matriceDistEucludienne = []
