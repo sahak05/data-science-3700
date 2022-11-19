@@ -27,43 +27,45 @@ priors_test = []
 counts = [0,0,0,0,0,0,0,0,0,0]
 
 #initialisation
-def initialisationData() :
-    fichier_test = np.loadtxt(open('mnist.csv', "rb"), delimiter=",",skiprows=1)
+def initialisationData()  :
+   
+    fichier_test = np.loadtxt(open('mnist.csv',"rb"),delimiter=",",skiprows=1)
     x = fichier_test[:, 1:]
     y = (fichier_test[:, 0]).astype(int)
     y_test.append(y)
+    
 
     for i in range(len(x)):
         for j in range(len(x[0])):
-            if x[i][j] != 0:
-                x[i][j] = round(x[i][j] / 255.0)
-
+            if x[i][j] != 0 :
+                x[i][j] = round(int(x[i][j]) / 255.0)
+    
     global counts
     for i in y:
-        counts[i] = counts[i] + 1
+        counts[i] += 1
     
     global priors_test
-    priors_test = [c / len(y) for c in counts]
-
-    print("Liste priors qui nous donne la probabilite d'avoir une image de chaque classe")
+    priors_test = [c / len(y) for c in counts] 
     print(priors_test)
-
-    for i in range(0, taille):
-        vecteur_test.append(np.reshape(x[i], (28,28)))
     
-def rotation(image, angle): #fonction de rotation suivant un angle en dregre. Image 28x28
-    gap_x = 14 - int(14 * (np.cos(angle) + np.sin(angle)))
-    gap_y = 14 - int( 14 * (np.cos(angle) - np.sin(angle)))
+    
+    for i in range(0,taille):
+        vecteur_test.append(np.reshape(x[i], (28,28)))
 
-    image_rotate = np.ones((28,28))
+def rotation(image,angle):
+    gap_x = 14 - int((14 * np.cos(angle)) + (14 * np.sin(angle)))
+    gap_y = 14 - int((-14 * np.sin(angle)) + (14 * np.cos(angle)))
+    
+    tab = np.zeros((28,28))
     for i in range(0,28):
         for j in range(0,28):
-            x_rorate = (int (round (i * np.cos(angle) + j * np.sin(angle)))) + gap_x
-            y_rorate = (int (round (-i * np.sin(angle) + j * np.cos(angle)))) + gap_y
-            if (x_rorate > -1 and x_rorate < 28) and (y_rorate > -1 and y_rorate < 28):
-                image_rotate[i][j] = image[x_rorate][y_rorate]
-    
-    return image_rotate
+            new_x = (i * np.cos(angle)) + (j * np.sin(angle))
+            new_x = int(round(new_x)) + gap_x
+            new_y = (-i * np.sin(angle)) + (j * np.cos(angle))
+            new_y = int(round(new_y)) + gap_y
+            if (new_x >= 0) and (new_y >= 0) and (new_x < 28) and (new_y < 28):
+                tab[i][j] = image[new_x][new_y]
+    return tab
 
 
 # Translation en fonction de la direction
@@ -97,10 +99,12 @@ def translation(image, direction):
             if (x_translate > -1 and x_translate < 28) and (y_translate > -1 and y_translate < 28):
                 image_translate[i][j] = image[x_translate][y_translate]
     return image_translate
+    
 
 def imagesInOneDimension():
-    for i in range(0, taille):
+    for i in range(0,(taille)):
         vecteurRow_test.append(np.reshape(vecteur_test[i], 784))
+
 
 # Maintenant Data augmentation
 # Premierement rotation des images du jeu de donnees
